@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NZLS</title>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Oswald&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/style.css">
+
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script src="/partials/loader.js"></script>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper black" id="nav">
+        </div>
+    </nav>
+
+    <ul class="sidenav grey darken-4" id="mobile-nav">
+    </ul>
+
+    <main>
+        <div class="container">
+            <div class="row">
+                <div class="col s12 l4">
+                    <h3>Hello, <span id="name"></span></h3>
+                    <div class="row">
+                        <form action="/order/">
+                            <h5>Book new delivery</h5>
+                            <div class="input-field row">
+                                <input type="text" id="id" name="id" class="col s12 m9">
+                                <label for="id">Invoice Number</label>
+                                <div class="col s12 m3">
+                                    <button type="submit" class="btn lime accent-3 black-text">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="row">
+                        <form action="/order/">
+                            <h5>Find appointment</h5>
+                            <div class="input-field row">
+                                <input type="text" id="id" name="id" class="col s12 m9">
+                                <label for="id">Invoice Number</label>
+                                <div class="col s12 m3">
+                                    <button type="submit" class="btn lime accent-3 black-text">Submit</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <div class="col s12 l4">
+                    <h5>Orders</h5>
+                    <div class="row center">
+                        <a href="#" id="previous-day"><span class="material-icons">arrow_back </span></a>
+                        <span style="font-size: 1.5em" id="calendar-date">08/01/2021</span>
+                        <a href="#" id="next-day"><span class="material-icons"> arrow_forward</span></a>
+                    </div>
+                    <div id="calendar">
+                        <div class="calendar-time" id="hour-01">7 am</div>
+                        <div class="calendar-time" id="hour-02">8 am</div>
+                        <div class="calendar-time" id="hour-03">9 am</div>
+                        <div class="calendar-time" id="hour-04">10 am</div>
+                        <div class="calendar-time" id="hour-05">11 am</div>
+                        <div class="calendar-time" id="hour-06">12 am</div>
+                        <div class="calendar-time" id="hour-07">1 pm</div>
+                        <div class="calendar-time" id="hour-08">2 pm</div>
+                        <div class="calendar-time" id="hour-09">3 pm</div>
+                        <div class="calendar-time" id="hour-10">4 pm</div>
+                        <div class="calendar-time" id="hour-11">5 pm</div>
+                        <div id="calendar-listings">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/datetime.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/orders.js"></script>
+    <script>
+        let today = new Date();
+        window.addEventListener('auth', (evt) => {
+            if (!auth) {
+                window.location.href = "/login/?redirect=" + encodeURI(window.location);
+            }
+            document.getElementById('name').innerText = auth.name;
+            setupCalendar();
+            setCalendarDay();
+        });
+        runAuth();
+    </script>
+</body>
+
+</html>

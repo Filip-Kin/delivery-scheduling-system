@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>NZLS</title>
+
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono&family=Oswald&family=Roboto:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css">
+    <link rel="stylesheet" href="/style.css">
+
+    <meta content="width=device-width, initial-scale=1" name="viewport" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <script src="/partials/loader.js"></script>
+</head>
+
+<body>
+    <nav>
+        <div class="nav-wrapper black" id="nav">
+        </div>
+    </nav>
+
+    <ul class="sidenav grey darken-4" id="mobile-nav">
+    </ul>
+
+    <main>
+        <div class="row">
+            <div class="col s12 l3">
+                <h5>Schedule</h5>
+                <div class="row center">
+                    <a href="#" id="previous-day"><span class="material-icons">arrow_back </span></a>
+                    <span style="font-size: 1.5em" id="calendar-date">08/01/2021</span>
+                    <a href="#" id="next-day"><span class="material-icons"> arrow_forward</span></a>
+                </div>
+                <div id="calendar">
+                    <div class="calendar-time" id="hour-01">7 am</div>
+                    <div class="calendar-time" id="hour-02">8 am</div>
+                    <div class="calendar-time" id="hour-03">9 am</div>
+                    <div class="calendar-time" id="hour-04">10 am</div>
+                    <div class="calendar-time" id="hour-05">11 am</div>
+                    <div class="calendar-time" id="hour-06">12 am</div>
+                    <div class="calendar-time" id="hour-07">1 pm</div>
+                    <div class="calendar-time" id="hour-08">2 pm</div>
+                    <div class="calendar-time" id="hour-09">3 pm</div>
+                    <div class="calendar-time" id="hour-10">4 pm</div>
+                    <div class="calendar-time" id="hour-11">5 pm</div>
+                    <div id="calendar-listings">
+                    </div>
+                </div>
+            </div>
+            <div class="col s12 l9">
+                <div class="row grey darken-3">
+                    <div class="col s12 l5">
+                        <div class="row">
+                            <div class="col s12 m6">
+                                <h5>Invoice</h5>
+                                <span id="invoice"></span>
+                                <h5>Total</h5>
+                                <span id="total"></span>
+                                <h5>Destination</h5>
+                                <div class="input-field"><textarea id="destination" class="materialize-textarea"></textarea></div>
+                                <h5>Distance</h5>
+                                <span id="distance"></span></div>
+                            <div class="col s12 m6">
+                                <h5>Appointment</h5>
+                                <div class="input-field">
+                                    <input type="text" class="datepicker" id="delivery-date">
+                                </div>
+                                <div class="input-field">
+                                    <select id="time-options">
+                                        <option value="1215">12:15 pm</option>
+                                    </select>
+                                </div>
+                                <div class="input-field">
+                                    <select id="truck-options">
+                                        <option value="0">Truck 1</option>
+                                        <option value="1">Truck 2</option>
+                                    </select>
+                                </div>
+                                <div class="input-field">
+                                    <textarea id="notes" class="materialize-textarea"></textarea>
+                                    <label for="notes">Notes</label>
+                                </div>
+                                <div class="input-field center">
+                                    <a class="btn lime accent-3 black-text" id="submit">Schedule Appointment</a>
+                                </div>
+                            </div>
+                        </div>
+                        <h5>Order</h5>
+                        <table>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Qty</th>
+                                <th>Rate</th>
+                                <th>Total</th>
+                            </tr>
+                            <tbody id="products"></tbody>
+                        </table>
+                    </div>
+                    <div class="col s12 l7">
+                        <div id="map"></div>
+                        <div class="row" id="streetview-container"><img class="responsive-img" alt="streetview img" id="streetview"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="/js/auth.js"></script>
+    <script src="/js/orders.js"></script>
+    <script src="/js/map.js"></script>
+    <script>
+        const ORDER_ID = window.location.toString().split('id=')[1];
+        let order;
+        let today = new Date();
+
+        window.addEventListener('auth', async (evt) => {
+            if (!auth) {
+                window.location.href = "/login/?redirect=" + encodeURI(window.location);
+            }
+            setCalendarDay();
+            
+            M.Datepicker.init(document.querySelectorAll('.datepicker'), {
+                autoClose: true,
+                format: 'dd/mm/yyyy',
+                defaultDate: today
+            });
+
+            document.getElementById('delivery-date').value = displayDate(today);
+
+            M.FormSelect.init(document.querySelectorAll('select'), {});
+
+            await getOrder(ORDER_ID);
+
+            renderOrder(order);
+        });
+        runAuth();
+    </script>
+</body>
+
+</html>

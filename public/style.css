@@ -1,0 +1,370 @@
+body,
+p {
+    font-family: 'Roboto', Arial, sans-serif;
+    color: white;
+}
+
+.black-text p {
+    color: black;
+}
+
+body {
+    background: #131212;
+}
+
+main {
+    min-height: calc(100vh - 64px);
+}
+
+section p,
+.bigger-text p {
+    font-size: 16pt;
+}
+
+.logo {
+    font-size: 2.1em
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+.card-title {
+    font-family: 'Oswald', Arial, sans-serif
+}
+
+h1,
+h2,
+h3,
+h4 {
+    text-transform: uppercase
+}
+
+h1 {
+    font-size: 8rem
+}
+
+strong {
+    font-weight: 700;
+}
+
+.card-title {
+    font-weight: 500 !important
+}
+
+code {
+    font-family: 'IBM', Courier, monospace;
+    background: #282c34;
+    color: #ebf2ff;
+    border: 0;
+    border-radius: 5px;
+    padding: 3px 5px 3px 5px;
+}
+
+#home {
+    height: calc(100vh - 64px);
+    padding-top: calc(((100vh - 64px) * .2));
+}
+
+#contact .col {
+    padding: 0 .35rem;
+}
+
+#contact .btn-large {
+    width: 100%;
+    margin: .35rem 0;
+}
+
+section {
+    padding: 1em .4em;
+}
+
+footer {
+    margin-top: 1em;
+}
+
+
+@media screen and (min-width: 800px) {
+    .row.equal-height-cards .col {
+        display: flex;
+    }
+
+    .row.equal-height-cards {
+        display: flex;
+    }
+
+    .row.equal-height-cards .card {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .row.equal-height-cards .card-content {
+        flex-grow: 1;
+    }
+
+    .cards-no-padding .col {
+        padding: 0;
+    }
+}
+
+@media screen and (max-width: 1000px) {
+    section p {
+        font-size: 14pt;
+    }
+
+    h1 {
+        font-size: 6rem
+    }
+}
+
+@media screen and (max-width: 800px) {
+    section p {
+        font-size: 12pt;
+    }
+
+    h1 {
+        font-size: 4rem
+    }
+}
+
+@media screen and (max-width: 400px) {
+    nav .brand-logo {
+        font-size: 1.5rem;
+    }
+}
+
+.brand-logo {
+    margin-left: 10px;
+}
+
+/* Inactive/Active Default input field color */
+.input-field input[type]:focus:not([readonly]),
+.input-field textarea:focus:not([readonly]),
+.select-wrapper input.select-dropdown:focus  {
+    border-bottom: 1px solid #c6ff00;
+    box-shadow: 0 1px 0 0 #c6ff00;
+}
+
+
+.input-field input[type]:not([readonly]),
+.input-field textarea:not([readonly]) {
+    color: white;
+}
+
+/* Inactive/Active Default input label color */
+.input-field input[type]:focus:not([readonly])+label,
+.input-field textarea:focus:not([readonly])+label,
+.select-wrapper input.select-dropdown:focus:not([readonly])+label {
+    color: #c6ff00;
+}
+
+/* Active/Inactive Invalid input field colors */
+.input-field input[type].invalid,
+.input-field input[type].invalid:focus,
+.input-field textarea.invalid,
+.input-field textarea.invalid:focus {
+    border-bottom: 1px solid #e57373;
+    box-shadow: 0 1px 0 0 #e57373;
+}
+
+/* Active/Inactive Invalid input label color */
+.input-field input[type].invalid:focus+label,
+.input-field input[type].invalid~.helper-text::after,
+.input-field input[type].invalid:focus~.helper-text::after,
+.input-field textarea.invalid:focus+label,
+.input-field textarea.invalid~.helper-text::after,
+.input-field textarea.invalid:focus~.helper-text::after {
+    color: #c6ff00;
+}
+
+/* Active/Inactive Valid input field color */
+.input-field input[type].valid,
+.input-field input[type].valid:focus,
+.input-field textarea.valid,
+.input-field textarea.valid:focus {
+    border-bottom: 1px solid #26a69a;
+    box-shadow: 0 1px 0 0 #26a69a;
+}
+
+/* Active/Inactive Valid input label color */
+.input-field input[type].valid:focus+label,
+.input-field input[type].valid~.helper-text::after,
+.input-field input[type].valid:focus~.helper-text::after,
+.input-field textarea.valid:focus+label,
+.input-field textarea.valid~.helper-text::after,
+.input-field textarea.valid:focus~.helper-text::after {
+    color: #26a69a;
+}
+
+.sidenav li a {
+    color: white;
+}
+
+ul.sidenav li.active,
+nav ul li.active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.dropdown-content {
+    background: #212121;
+    transform: translateY(-64px);
+}
+
+.dropdown-content li>a,
+.dropdown-content li>span {
+    color: white;
+}
+
+.dropdown-content li:hover,
+.dropdown-content li.active {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+a.dropdown-trigger:focus {
+    outline: none;
+}
+
+ul.mobile-dropdown {
+    border: #c6ff00 solid 1px;
+    border-right: none;
+    margin-left: 32px;
+}
+
+ul.mobile-dropdown li a {
+    font-size: 12px;
+    height: 32px;
+    line-height: 32px;
+    padding-left: 12px;
+}
+
+.fill-img {
+    width: 100%;
+    height: 60%;
+    object-fit: cover;
+}
+
+#map {
+    height: 50vh;
+}
+
+#streetview {
+    margin: 20px 10px;
+}
+
+#invoice {
+    font-size: 1.5em;
+}
+
+#hour-01 {
+    margin-top: 0;
+}
+
+#hour-11 {
+    margin-bottom: 100px;
+}
+
+#calendar-listings {
+    position: relative;
+    top: -950px;
+}
+
+.calendar-listing {
+    position: absolute;
+    margin-left: 70px;
+    width: 120px;
+    padding: 3px;
+    border-radius: 3px;
+}
+
+.calendar-listing.truck-2 {
+    margin-left: 210px;
+}
+
+.calendar-time {
+    position: relative;
+    margin-top: 60px;
+    color: #999;
+    border-bottom: 1px #999 solid;
+    width: 90%;
+}
+
+#calendar {
+    overflow-y: scroll;
+    height: 80vh;
+}
+
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, .1);
+    border-radius: 4px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, .5);
+    border-radius: 4px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, .8);
+}
+
+.calendar-listing-invoice {
+    font-size: .8em;
+}
+
+.calendar-listing-name {
+    font-size: .75em;
+}
+
+.calendar-listing-address {
+    font-size: .75em;
+}
+
+.calendar-listing-phone {
+    font-size: .9em;
+}
+
+.calendar-listing-time {
+    font-size: .95em;
+}
+
+.calendar-listing {
+    overflow: hidden;
+}
+
+textarea {
+    color: white;
+}
+
+.datepicker-date-display,
+.datepicker-date-display .year-text {
+    background: #c6ff00;
+    color: #333;
+}
+
+.datepicker-calendar-container {
+    background: #333;
+}
+
+button svg {
+    fill: white;
+}
+
+input.select-dropdown.dropdown-trigger {
+    color: white;
+}
+
+button.btn-flat {
+    color: #c6ff00;
+}
+
+.dropdown-content {
+    max-height: 60vh;
+}
