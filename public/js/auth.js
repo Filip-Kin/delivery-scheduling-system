@@ -1,4 +1,4 @@
-const API_ROOT = 'http://localhost';
+const API_ROOT = 'https://delivery.filipkin.com';
 
 let auth = null;
 const event = new CustomEvent('auth', { detail: auth });
