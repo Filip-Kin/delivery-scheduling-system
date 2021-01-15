@@ -368,3 +368,29 @@ button.btn-flat {
 .dropdown-content {
     max-height: 60vh;
 }
+
+.center-loader {
+    position: absolute;
+    top: calc(50vh - 35px);
+    left: calc(50vw - 32px);
+    z-index: 100;
+    transition: 1s opacity ease-in;
+}
+
+.order-main {
+    transition: 1s filter cubic-bezier(0.9, -0.12, 1, 1);
+}
+
+#calendar {
+    transition: 200ms filter cubic-bezier(0.9, -0.12, 1, 1);
+}
+
+#calendar-loader {
+    position: relative;
+    left: calc(50% - 32px);
+    top: 100px;
+    z-index: 100;
+    transition: 300ms opacity ease-in;
+    width: 0; 
+    height: 0;
+}

@@ -1,11 +1,82 @@
 let loaded = false;
 
+const loadingCalendar = () => {
+    document.getElementById('calendar-loader').style.display = 'block';
+    document.getElementById('calendar-loader').style.opacity = 1;
+    document.getElementById('calendar').style.filter = 'blur(5px) brightness(0.6)';
+}
+
+const doneLoadingCalendar = () => {
+    document.getElementById('calendar-loader').style.opacity = 0;
+    document.getElementById('calendar').style.filter = '';
+    setTimeout(() => { document.getElementById('calendar-loader').style.display = 'none' }, 1e3);
+}
+
+const renderInvoice = async () => {
+    initSelects();
+    order.id = 'temp';
+    order.truck = 0;
+    setDetails();
+    initDatepicker(today);
+
+    setStreetView(document.getElementById('streetview'), order.address.join(', '));
+    await calcRoute();
+
+    await setCalendarDay(today);
+    renderTimeSelect(generatePossibleTimes());
+    renderTruckSelect();
+
+    updateDeliveryTime();
+    createCalendarListing();
+
+    M.updateTextFields();
+    setupCalendar();
+    doneLoadingCalendar();
+    setTimeout(finishLoading, 1.5e3);
+    setTimeout(initSelects, 3e3);
+    setTimeout(setupListeners, 3.5e3);
+}
+
 const renderOrder = async () => {
+    initSelects();
+    setDetails();
+    initDatepicker(order.leaveTime);
+    await setCalendarDay(order.leaveTime);
+
+    if (order.notes) document.getElementById('notes').value = order.notes;
+    M.textareaAutoResize(document.getElementById('notes'));
+
+    setStreetView(document.getElementById('streetview'), order.address.join(', '));
+    await calcRoute();
+
+    renderTimeSelect(generatePossibleTimes());
+    renderTruckSelect();
+
+    M.updateTextFields();
+    setupCalendar();
+    doneLoadingCalendar();
+    setTimeout(finishLoading, 1.5e3);
+    setTimeout(initSelects, 3e3);
+    setTimeout(setupListeners, 3.5e3);
+}
+
+const finishLoading = () => {
+    document.getElementById('loader').style.opacity = 0;
+    document.getElementById('main').style = '';
+    setTimeout(() => { document.getElementById('loader').style.display = 'none' }, 1000);
+}
+
+const initSelects = () => {
+    let selects = document.querySelectorAll('select');
+    M.FormSelect.init(selects, {});
+}
+
+const setDetails = () => {
     document.getElementById('invoice').innerText = order.invoice;
     document.getElementById('total').innerText = '$' + order.total;
     document.getElementById('destination').value = order.address.join('\n');
-
     M.textareaAutoResize(document.getElementById('destination'));
+
     let out = '';
     for (let item of order.products) {
         out += `<tr>
@@ -15,41 +86,25 @@ const renderOrder = async () => {
             <td>${item.total}</td>
         </tr>`;
     }
+
     document.getElementById('products').innerHTML = out;
+}
 
-    if (typeof order.id !== 'undefined') {
-        if (order.id !== 'temp') {
-            document.getElementById('delivery-date').M_Datepicker.setDate(order.leaveTime);
-            document.getElementById('delivery-date').value = displayDate(order.leaveTime);
-            await setCalendarDay(order.leaveTime);
-        }
-        if (order.notes) document.getElementById('notes').value = order.notes;
-        M.textareaAutoResize(document.getElementById('notes'));
-        M.updateTextFields();
-    } else order.id = 'temp';
-
-    setStreetView(document.getElementById('streetview'), order.address.join(', '));
-    await calcRoute();
-
-    if (order.id === 'temp') {
-        await setCalendarDay(today);
-        await updateDeliveryDate();
-    }
-
-    renderTruckSelect();
-    order.truck = 0;
-    renderTimeSelect(generatePossibleTimes());
-
-    if (order.id === 'temp') {
-        updateDeliveryTime();
-        createCalendarListing();
-    }
-    setTimeout(() => M.FormSelect.init(document.querySelectorAll('select'), {}), 3e3);
+const initDatepicker = (date) => {
+    M.Datepicker.init(document.querySelectorAll('.datepicker'), {
+        autoClose: true,
+        format: 'dd/mm/yyyy',
+        defaultDate: date,
+        setDefaultDate: true,
+        autoClose: true,
+        onSelect: datePickerChange
+    });
 }
 
 const setupListeners = () => {
     document.getElementById('time-options').addEventListener('change', updateDeliveryTime);
     document.getElementById('truck-options').addEventListener('change', updateTruck);
+    document.getElementById('delivery-date').addEventListener('change', datePickerChange);
     document.getElementById('destination').addEventListener('keydown', () => {
         document.getElementById('update-destination').style.display = 'block'
     });
@@ -107,9 +162,11 @@ const getOrders = async (date = null) => {
 }
 
 const setCalendarDay = async (date = new Date()) => {
+    loadingCalendar();
     date = new Date(date);
     document.getElementById('calendar-date').innerHTML = displayDate(date);
     await getOrders(mysqlDate(date)).then(orders => renderCalendar(orders));
+    doneLoadingCalendar();
 }
 
 const setupCalendar = () => {
@@ -168,7 +225,7 @@ const renderTimeSelect = (options) => {
         out += `<option value="${time}"${(typeof order === 'undefined' || getTimeNum(order.leaveTime) !== time)?'':' selected'}>${timeNumToDisplay(time)}</option>\n`;
     }
     document.getElementById('time-options').innerHTML = out;
-    //M.FormSelect.init(document.getElementById('time-options'), {});
+    initSelects();
 }
 
 const generatePossibleTimes = () => {
@@ -187,8 +244,11 @@ const generatePossibleTimes = () => {
 
 const iterateThroughOrdersForTimes = (notThisOrderOrders, i, allocateTime, possibleTimes) => {
     for (let thisorder of notThisOrderOrders) {
-        if (getTimeNum(thisorder.leaveTime) <= i && getTimeNum(thisorder.returnTime) >= i) return; // starts during another order
-        if (getTimeNum(thisorder.leaveTime) <= i + allocateTime && getTimeNum(thisorder.returnTime) >= i + allocateTime) return; // ends during another order
+        let leaveTime = getTimeNum(thisorder.leaveTime);
+        let returnTime = getTimeNum(thisorder.returnTime);
+        if (leaveTime <= i && returnTime >= i) return; // starts during another order
+        if (leaveTime <= i + allocateTime && returnTime >= i + allocateTime) return; // ends during another order
+        if (leaveTime >= i && returnTime <= i + allocateTime) return; // another order starts and ends within this time
     }
     possibleTimes.push(i);
 }
@@ -196,7 +256,6 @@ const iterateThroughOrdersForTimes = (notThisOrderOrders, i, allocateTime, possi
 const renderTruckSelect = () => {
     document.getElementById('truck-options').innerHTML = `<option value="0"${(typeof order === 'undefined' || order.truck !== 0)?'':' selected'}>Truck 1</option>
     <option value="1"${(typeof order === 'undefined' || order.truck !== 1)?'':' selected'}>Truck 2</option>`;
-    //M.FormSelect.init(document.getElementById('truck-options'), {});
 }
 
 const updateDeliveryDate = async () => {

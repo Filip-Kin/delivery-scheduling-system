@@ -29,7 +29,23 @@
     <ul class="sidenav grey darken-4" id="mobile-nav">
     </ul>
 
-    <main>
+    <div class="center-loader" id="loader">
+        <div class="preloader-wrapper big active">
+            <div class="spinner-layer spinner-green-only">
+                <div class="circle-clipper left">
+                    <div class="circle"></div>
+                </div>
+                <div class="gap-patch">
+                    <div class="circle"></div>
+                </div>
+                <div class="circle-clipper right">
+                    <div class="circle"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main style="filter: blur(10px) brightness(0.3);pointer-events: none;" id="main" class="order-main">
         <div class="row">
             <div class="col s12 l3">
                 <h5>Schedule</h5>
@@ -37,6 +53,21 @@
                     <a href="#" id="previous-day"><span class="material-icons">arrow_back </span></a>
                     <span style="font-size: 1.5em" id="calendar-date">08/01/2021</span>
                     <a href="#" id="next-day"><span class="material-icons"> arrow_forward</span></a>
+                </div>
+                <div id="calendar-loader">
+                    <div class="preloader-wrapper active" style="display: absolute">
+                        <div class="spinner-layer spinner-green-only">
+                            <div class="circle-clipper left">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="gap-patch">
+                                <div class="circle"></div>
+                            </div>
+                            <div class="circle-clipper right">
+                                <div class="circle"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
                 <div id="calendar">
                     <div class="calendar-time" id="hour-01">7 am</div>
@@ -64,22 +95,30 @@
                                 <h5>Total</h5>
                                 <span id="total"></span>
                                 <h5>Destination</h5>
-                                <div class="input-field"><textarea id="destination" class="materialize-textarea"></textarea></div>
-                                <a href="#" id="update-destination" class="btn lime accent-3 black-text" style="display: none">Update address</a>
+                                <div class="input-field"><textarea id="destination"
+                                        class="materialize-textarea"></textarea></div>
+                                <a href="#" id="update-destination" class="btn lime accent-3 black-text"
+                                    style="display: none">Update address</a>
                                 <h5>Distance</h5>
-                                <span id="distance"></span></div>
+                                <span id="distance"></span>
+                            </div>
                             <div class="col s12 m6">
                                 <h5>Appointment</h5>
                                 <div class="input-field">
+                                    <label>Date</label>
                                     <input type="text" class="datepicker" id="delivery-date">
                                 </div>
                                 <div class="input-field">
                                     <select id="time-options">
+                                        <option value="" selected>Loading</option>
                                     </select>
+                                    <label>Time</label>
                                 </div>
                                 <div class="input-field">
                                     <select id="truck-options">
+                                        <option value="" selected>Loading</option>
                                     </select>
+                                    <label>Truck</label>
                                 </div>
                                 <div class="input-field">
                                     <textarea id="notes" class="materialize-textarea"></textarea>
@@ -103,7 +142,8 @@
                     </div>
                     <div class="col s12 l7">
                         <div id="map"></div>
-                        <div class="row" id="streetview-container"><img class="responsive-img" alt="streetview img" id="streetview"></div>
+                        <div class="row" id="streetview-container"><img class="responsive-img" alt="streetview img"
+                                id="streetview"></div>
                     </div>
                 </div>
             </div>
@@ -115,8 +155,8 @@
     <script src="/js/orders.js"></script>
     <script src="/js/map.js"></script>
     <script>
-        const ORDER_ID = window.location.toString().split('id=')[1];
-        let order;
+        window.addEventListener('ready', console.log('done'));
+        const ORDER_ID = window.location.toString().split('id=')[1].split('#')[0];
         let today = new Date();
         if (today.getHours() > 17) today.setDate(today.getDate() + 1);
 
@@ -125,22 +165,13 @@
                 window.location.href = "/login/?redirect=" + encodeURI(window.location);
             }
 
-            setupCalendar();
-            
-            M.Datepicker.init(document.querySelectorAll('.datepicker'), {
-                autoClose: true,
-                format: 'dd/mm/yyyy',
-                defaultDate: today,
-                onClose: datePickerChange
-            });
-
-            document.getElementById('delivery-date').value = displayDate(today);
-
-            if (ORDER_ID.length === 36) await getOrder(ORDER_ID);
-            else await getInvoice(ORDER_ID);
-
-            renderOrder();
-            setupListeners();
+            if (ORDER_ID.length === 36) {
+                await getOrder(ORDER_ID);
+                renderOrder();
+            } else {
+                await getInvoice(ORDER_ID);
+                renderInvoice();
+            }
         });
         runAuth();
     </script>
