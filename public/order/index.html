@@ -45,6 +45,23 @@
         </div>
     </div>
 
+    <div id="modal1" class="modal grey darken-3">
+        <div class="modal-content">
+            <h4>Order not found!</h4>
+            <p>
+                The invoice or order you were looking for was not found, please verify you have the right input.
+                If you believe this is an error please contact your system administrator.
+            </p>
+            <div class="input-field">
+                <input type="text" id="invoice-not-found" name="invoice-not-found">
+                <label for="invoice-not-found">Invoice Number</label>
+            </div>
+        </div>
+        <div class="modal-footer grey darken-4">
+            <a href="#" class="btn lime accent-4 black-text" id="search-again">Search Again</a>
+        </div>
+    </div>
+
     <main style="filter: blur(10px) brightness(0.3);pointer-events: none;" id="main" class="order-main">
         <div class="row">
             <div class="col s12 l3">
@@ -160,22 +177,42 @@
         let today = new Date();
         if (today.getHours() > 17) today.setDate(today.getDate() + 1);
 
+        const searchAgain = () => {
+            window.location.href = '/order/?id=' + document.getElementById('invoice-not-found').value + ((queryString.includes('existing')) ? '&existing' : '');
+        }
+
         window.addEventListener('auth', async (evt) => {
             if (!auth) {
                 window.location.href = "/login/?redirect=" + encodeURI(window.location);
             }
 
-            if (ORDER_ID.length === 36) {
-                await getOrder(ORDER_ID);
-                renderOrder();
-            } else if (queryString.includes('existing')) {
-                await getInvoice(ORDER_ID);
-                order.returnTime = new Date(order.returnTime);
-                order.leaveTime = new Date(order.leaveTime);
-                renderOrder();
-            } else {
-                await getInvoice(ORDER_ID);
-                renderInvoice();
+            let modal = M.Modal.init(document.getElementById('modal1'), {});
+            document.getElementById('invoice-not-found').addEventListener('keydown', (e) => {if (e.key = 'Wnter') searchAgain()});
+            document.getElementById('search-again').addEventListener('click', searchAgain);
+
+            try {
+                if (ORDER_ID.length === 36) {
+                    await getOrder(ORDER_ID);
+                    renderOrder();
+                } else if (queryString.includes('existing')) {
+                    await getInvoice(ORDER_ID);
+                    order.returnTime = new Date(order.returnTime);
+                    order.leaveTime = new Date(order.leaveTime);
+                    renderOrder();
+                } else {
+                    await getInvoice(ORDER_ID);
+                    renderInvoice();
+                }
+            } catch (e) {
+                M.toast({
+                    html: e.message,
+                    displayLength: 100000
+                });
+                if (e.message.includes('not found')) {
+                    document.getElementById('invoice-not-found').value = ORDER_ID;
+                    M.updateTextFields();
+                    modal.open();
+                }
             }
         });
         runAuth();

@@ -119,26 +119,30 @@ const setupListeners = () => {
 }
 
 const getInvoice = async (id) => {
-    order = (await fetch(API_ROOT + '/invoice/' + id, {
+    let res = (await fetch(API_ROOT + '/invoice/' + id, {
         method: 'GET',
         headers: {
             id: auth.id,
             password: auth.password
         },
         cache: 'force-cache'
-    }).then(res => res.json())).order;
+    }).then(res => res.json()));
+    if (res.order) order = res.order;
+    else throw new Error(res.error);
     order.date = new Date(order.date);
     return order;
 }
 
 const getOrder = async (id) => {
-    order = (await fetch(API_ROOT + '/order/' + id, {
+    let res = (await fetch(API_ROOT + '/order/' + id, {
         method: 'GET',
         headers: {
             id: auth.id,
             password: auth.password
         }
-    }).then(res => res.json())).order;
+    }).then(res => res.json()));
+    if (res.order) order = res.order;
+    else throw new Error(res.error);
     order.returnTime = new Date(order.returnTime);
     order.leaveTime = new Date(order.leaveTime);
     order.date = new Date(order.date);
