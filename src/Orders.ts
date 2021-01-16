@@ -10,6 +10,9 @@ export class Orders {
     }
 
     public getInvoice = async (invnum: string): Promise<Order> => {
+        let order = await this.sql.query('SELECT * FROM `orders` WHERE `invoice` = ?', [invnum]);
+        if (order.length > 0) return this.getOrder(order[0].id);
+
         let responses = await Promise.all([
             this.sql.query('SELECT `INVNUM`, `TOTAL`, `GST`, `LOCATION`, `DATE`, `NAME`, `ADD1`, `ADD2`, `ADD3`, `ADD4`, `PHONE` FROM `invidx` WHERE `INVNUM` = ?;', [invnum]),
             this.sql.query('SELECT `CODE`, `QTY`, `RATE` FROM `custprod` WHERE `INVNUM` = ?;', [invnum])

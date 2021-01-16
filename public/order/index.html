@@ -155,8 +155,8 @@
     <script src="/js/orders.js"></script>
     <script src="/js/map.js"></script>
     <script>
-        window.addEventListener('ready', console.log('done'));
-        const ORDER_ID = window.location.toString().split('id=')[1].split('#')[0];
+        let queryString = window.location.toString().split('id=')[1].split('#')[0];
+        const ORDER_ID = queryString.split('&')[0];
         let today = new Date();
         if (today.getHours() > 17) today.setDate(today.getDate() + 1);
 
@@ -167,6 +167,11 @@
 
             if (ORDER_ID.length === 36) {
                 await getOrder(ORDER_ID);
+                renderOrder();
+            } else if (queryString.includes('existing')) {
+                await getInvoice(ORDER_ID);
+                order.returnTime = new Date(order.returnTime);
+                order.leaveTime = new Date(order.leaveTime);
                 renderOrder();
             } else {
                 await getInvoice(ORDER_ID);
